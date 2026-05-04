@@ -51,10 +51,14 @@ public class Plugin : BaseUnityPlugin
     void RegisterPrefabs()
     {
         BackroomsPrefab = assetBundle.LoadAsset<GameObject>("Backrooms");
+        var cellsVariantsPrefabs = assetBundle.LoadAllAssets<CellBehaviour>(); 
         var defaultCellDefaultVariant = assetBundle.LoadAsset<GameObject>("DefaultBackroomCellPrefab");
         
         DawnLib.RegisterNetworkPrefab(BackroomsPrefab);
-        DawnLib.RegisterNetworkPrefab(defaultCellDefaultVariant);
+        foreach(var cell in cellsVariantsPrefabs) 
+        {
+            DawnLib.RegisterNetworkPrefab(cell.gameObject);
+        }
     }
     
     void RegisterAchievements()
