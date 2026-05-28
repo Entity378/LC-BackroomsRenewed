@@ -5,7 +5,7 @@
     "dependencies": [
         "BepInEx-BepInExPack-5.4.2304",
         "AinaVT-LethalConfig-1.4.6",
-        "TeamXiaolan-DawnLib-0.7.0"
+        "TeamXiaolan-DawnLib-0.9.2"
     ],
     "website_url": "https://github.com/VELD-Dev/LC-BackroomsRenewed"
 }

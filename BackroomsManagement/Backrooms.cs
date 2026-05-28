@@ -184,6 +184,8 @@ public class Backrooms : NetworkBehaviour
         }
 
         targetPlayer.TeleportPlayer(position, true);
+        targetPlayer.ResetFallGravity();
+        targetPlayer.isInsideFactory = true;
     }
 
     private Vector3 GetFallbackPosition()
