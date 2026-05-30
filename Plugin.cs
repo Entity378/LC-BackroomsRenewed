@@ -20,8 +20,6 @@ public class Plugin : BaseUnityPlugin
 
     void Awake()
     {
-        NetcodePatch();
-        
         var backroomsModExists = BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("Neekhaulas.Backrooms");
         Instance = this;
         logger = Logger;
@@ -65,26 +63,5 @@ public class Plugin : BaseUnityPlugin
     {
         achievements = new AchievementAssets(mod, "backroomsrenewed_achievements");
         mod.RegisterContentHandlers();
-    }
-    
-    private void NetcodePatch()
-    {
-            var types = Assembly.GetExecutingAssembly().GetTypes(); 
-            foreach (var type in types)
-            {
-                // Avoids errors when not having LethalConfig (it's a soft dep)
-                if (type == typeof(LethalConfigSupport))
-                    continue;
-                
-                var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-                foreach (var method in methods)
-                {
-                    var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
-                    if (attributes.Length > 0)
-                    {
-                        method.Invoke(null, null);
-                    }
-                }
-            }
     }
 }
