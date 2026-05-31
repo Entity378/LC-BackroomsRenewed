@@ -10,13 +10,13 @@ public class CellBehaviour : NetworkBehaviour {
     public Light cellLightSource;
     public bool hasLightSource = false;  // Only when initializing
     public bool defaultLightState = false;  // Anytime
-
-    private NetworkVariable<Cell> _representation = new();
+    
+    private Cell _representation;
     
     [ClientRpc]
     public void InitializeClientRpc(Cell cell, bool withLight, bool lightState)
     {
-        _representation.Value = cell;
+        _representation = cell;
         hasLightSource = withLight;
         defaultLightState = lightState;
         UpdateWalls();
@@ -36,10 +36,10 @@ public class CellBehaviour : NetworkBehaviour {
     
     private void UpdateWalls()
     {
-        NorthWall.SetActive((_representation.Value.Walls & WallFlags.North) != 0);
-        EastWall.SetActive((_representation.Value.Walls & WallFlags.East) != 0);
-        SouthWall.SetActive((_representation.Value.Walls & WallFlags.South) != 0);
-        WestWall.SetActive((_representation.Value.Walls & WallFlags.West) != 0);
+        NorthWall.SetActive((_representation.walls & WallFlags.North) != 0);
+        EastWall.SetActive((_representation.walls & WallFlags.East) != 0);
+        SouthWall.SetActive((_representation.walls & WallFlags.South) != 0);
+        WestWall.SetActive((_representation.walls & WallFlags.West) != 0);
     }
 
     private void SetLightState(bool state)

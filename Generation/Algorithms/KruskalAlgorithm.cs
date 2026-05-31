@@ -106,8 +106,8 @@ public class KruskalAlgorithm : IMazeAlgorithm
 
             if (uf.Union(idA, idB))
             {
-                maze[edge.CellA.x, edge.CellA.y].Walls &= ~edge.WallA;
-                maze[edge.CellB.x, edge.CellB.y].Walls &= ~edge.WallB;
+                maze[edge.CellA.x, edge.CellA.y].walls &= ~edge.WallA;
+                maze[edge.CellB.x, edge.CellB.y].walls &= ~edge.WallB;
             }
 
             if (perfSw.ElapsedMilliseconds > 16)

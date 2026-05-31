@@ -34,8 +34,8 @@ public class PrimAlgorithm : IMazeAlgorithm
 
             if (!inMaze[nx, ny])
             {
-                maze[wall.Cell.x, wall.Cell.y].Walls &= ~wall.Wall;
-                maze[nx, ny].Walls &= ~GetOppositeWall(wall.Wall);
+                maze[wall.Cell.x, wall.Cell.y].walls &= ~wall.Wall;
+                maze[nx, ny].walls &= ~GetOppositeWall(wall.Wall);
 
                 inMaze[nx, ny] = true;
                 AddWalls(maze, walls, inMaze, nx, ny, width, height);

@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LethalCompany.GameLibs.Steam" Version="73.0.0-ngd.0" />
+    <PackageReference Include="LethalCompany.GameLibs.Steam" Version="81.0.5-ngd.0" />
     <PackageReference Include="HarmonyX" Version="2.9.0" />
     <PackageReference Include="BepInEx.Core" Version="5.4.21" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="FixPluginTypesSerialization">
+      <HintPath>deps\Evaisa-FixPluginTypesSerialization-1.1.4\FixPluginTypesSerialization.dll</HintPath>
+    </Reference>
     <Reference Include="LethalConfig">
       <HintPath>./deps/LethalConfig/LethalConfig.dll</HintPath>
     </Reference>

@@ -90,8 +90,8 @@ public class BlobAlgorithm : IMazeAlgorithm
             {
                 var merge = mergeCandidates[Random.Range(0, mergeCandidates.Count)];
                 
-                maze[merge.CellA.x, merge.CellA.y].Walls &= ~merge.WallA;
-                maze[merge.CellB.x, merge.CellB.y].Walls &= ~merge.WallB;
+                maze[merge.CellA.x, merge.CellA.y].walls &= ~merge.WallA;
+                maze[merge.CellB.x, merge.CellB.y].walls &= ~merge.WallB;
                 
                 var blobA = cellToBlob[merge.CellA];
                 var blobB = cellToBlob[merge.CellB];

@@ -191,9 +191,9 @@ public class Backrooms : NetworkBehaviour
     private Vector3 GetFallbackPosition()
     {
         return new Vector3(
-            (generator.width * CELL_SIZE) / 2f,
-            -1000f,
-            (generator.height * CELL_SIZE) / 2f
+            transform.position.x,
+            transform.position.y + 2,
+            transform.position.z
         );
     }
 
@@ -295,41 +295,41 @@ public class Backrooms : NetworkBehaviour
                 {
                     if(x == 0)
                     {
-                        cell.Walls |= WallFlags.West | WallFlags.South;
+                        cell.walls |= WallFlags.West | WallFlags.South;
                     }
                     else if(x == generator.width - 1)
                     {
-                        cell.Walls |= WallFlags.East | WallFlags.South;
+                        cell.walls |= WallFlags.East | WallFlags.South;
                     }
                     else
                     {
-                        cell.Walls |= WallFlags.South;
+                        cell.walls |= WallFlags.South;
                     }
                 }
                 else if(y == generator.height - 1)
                 {
                     if(x == 0)
                     {
-                        cell.Walls |= WallFlags.West | WallFlags.North;
+                        cell.walls |= WallFlags.West | WallFlags.North;
                     }
                     else if(x == generator.width - 1)
                     {
-                        cell.Walls |= WallFlags.East | WallFlags.North;
+                        cell.walls |= WallFlags.East | WallFlags.North;
                     }
                     else
                     {
-                        cell.Walls |= WallFlags.North;
+                        cell.walls |= WallFlags.North;
                     }
                 }
                 else
                 {
                     if(x == 0)
                     {
-                        cell.Walls |= WallFlags.West;
+                        cell.walls |= WallFlags.West;
                     }
                     else if(x == generator.width - 1)
                     {
-                        cell.Walls |= WallFlags.East;
+                        cell.walls |= WallFlags.East;
                     }
                     else
                     {
@@ -337,7 +337,7 @@ public class Backrooms : NetworkBehaviour
                         // I remove these walls as the previous cells already have it !
                         // The next cell doesn't need to remove its walls !
                         // I call this easy optimization.
-                        cell.Walls &= ~(WallFlags.South | WallFlags.West);
+                        cell.walls &= ~(WallFlags.South | WallFlags.West);
                     }
                 }
 
@@ -390,7 +390,7 @@ public class Backrooms : NetworkBehaviour
         // Set anti-light leak cover location and size
         var backroomsCenter = new Vector3((width * CELL_SIZE) / 2f, 10f, (length * CELL_SIZE) / 2f);
         BackroomsLightCover.transform.localPosition = backroomsCenter;
-        BackroomsLightCover.transform.localScale = new Vector3(width, 1f, length) * 1.1f;
+        BackroomsLightCover.transform.localScale = new Vector3(width, 1f, length) * 1.5f;
         
         // Navmesh may be baked in the future by making one navmesh surface for each cell
         // and adding navmesh links between cells

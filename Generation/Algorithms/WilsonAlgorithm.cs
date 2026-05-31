@@ -91,23 +91,23 @@ public class WilsonAlgorithm : IMazeAlgorithm
 
         if (dx == 1)
         {
-            maze[a.x, a.y].Walls &= ~WallFlags.East;
-            maze[b.x, b.y].Walls &= ~WallFlags.West;
+            maze[a.x, a.y].walls &= ~WallFlags.East;
+            maze[b.x, b.y].walls &= ~WallFlags.West;
         }
         else if (dx == -1)
         {
-            maze[a.x, a.y].Walls &= ~WallFlags.West;
-            maze[b.x, b.y].Walls &= ~WallFlags.East;
+            maze[a.x, a.y].walls &= ~WallFlags.West;
+            maze[b.x, b.y].walls &= ~WallFlags.East;
         }
         else if (dy == 1)
         {
-            maze[a.x, a.y].Walls &= ~WallFlags.North;
-            maze[b.x, b.y].Walls &= ~WallFlags.South;
+            maze[a.x, a.y].walls &= ~WallFlags.North;
+            maze[b.x, b.y].walls &= ~WallFlags.South;
         }
         else if (dy == -1)
         {
-            maze[a.x, a.y].Walls &= ~WallFlags.South;
-            maze[b.x, b.y].Walls &= ~WallFlags.North;
+            maze[a.x, a.y].walls &= ~WallFlags.South;
+            maze[b.x, b.y].walls &= ~WallFlags.North;
         }
     }
 }

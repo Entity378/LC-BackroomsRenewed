@@ -1,3 +1,5 @@
+using UnityEngine.Serialization;
+
 namespace VELDDev.BackroomsRenewed.Generation;
 
 [System.Flags]
@@ -11,19 +13,19 @@ public enum WallFlags : byte
 }
 
 [Serializable]
-public class Cell : INetworkSerializable, IEquatable<Cell>
+public struct Cell : IEquatable<Cell>, INetworkSerializable
 {
-    public WallFlags Walls;
+    public WallFlags walls;
     public Vector2Int position;
     
     public Cell()
     {
-        Walls = WallFlags.North | WallFlags.East | WallFlags.South | WallFlags.West;
+        walls = WallFlags.North | WallFlags.East | WallFlags.South | WallFlags.West;
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
-        serializer.SerializeValue(ref Walls);
+        serializer.SerializeValue(ref walls);
         serializer.SerializeValue(ref position);
     }
 
@@ -31,19 +33,21 @@ public class Cell : INetworkSerializable, IEquatable<Cell>
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Walls == other.Walls && position.Equals(other.position);
+        return walls == other?.walls && position.Equals(other?.position);
     }
 
     public override bool Equals(object? obj)
     {
-        if (obj is null) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((Cell)obj);
+        return obj is Cell other && Equals(other);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine((int)Walls, position);
+        return HashCode.Combine((int)walls, position);
+    }
+
+    public bool Equals(Cell other)
+    {
+        return walls == other.walls && position.Equals(other.position);
     }
 }

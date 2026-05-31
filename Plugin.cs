@@ -20,6 +20,8 @@ public class Plugin : BaseUnityPlugin
 
     void Awake()
     {
+        InitializeTypes();
+        
         var backroomsModExists = BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("Neekhaulas.Backrooms");
         Instance = this;
         logger = Logger;
@@ -51,10 +53,9 @@ public class Plugin : BaseUnityPlugin
     {
         BackroomsPrefab = assetBundle.LoadAsset<GameObject>("Backrooms");
         var cellsVariantsPrefabs = assetBundle.LoadAllAssets<CellBehaviour>(); 
-        var defaultCellDefaultVariant = assetBundle.LoadAsset<GameObject>("DefaultBackroomCellPrefab");
         
         DawnLib.RegisterNetworkPrefab(BackroomsPrefab);
-        foreach(var cell in cellsVariantsPrefabs) 
+        foreach(var cell in cellsVariantsPrefabs)
         {
             DawnLib.RegisterNetworkPrefab(cell.gameObject);
         }
@@ -64,5 +65,27 @@ public class Plugin : BaseUnityPlugin
     {
         achievements = new AchievementAssets(mod, "backroomsrenewed_achievements");
         mod.RegisterContentHandlers();
+    }
+
+    private static void InitializeTypes()
+    {
+        InitializeNetworkBehaviour(typeof(Backrooms));
+        InitializeNetworkBehaviour(typeof(CellBehaviour));
+        InitializeNetworkBehaviour(typeof(FairRandomizer));
+        InitializeNetworkBehaviour(typeof(Cell));
+        
+        NetworkVariableSerializationTypes.InitializeSerializer_UnmanagedINetworkSerializable<Cell>();
+        NetworkVariableSerializationTypes.InitializeEqualityChecker_UnmanagedIEquatable<Cell>();
+    }
+    
+    private static void InitializeNetworkBehaviour(Type type)
+    {
+        var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+        foreach (var method in methods)
+        {
+            var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
+            if (attributes.Length == 0) continue;
+            method.Invoke(null, null);
+        }
     }
 }

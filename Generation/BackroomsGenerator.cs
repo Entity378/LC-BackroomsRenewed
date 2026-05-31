@@ -61,19 +61,19 @@ public class BackroomsGenerator : MonoBehaviour
         {
             case 0:
                 exitPosition = new Vector2Int(Random.Range(0, width), height - 1);
-                cells[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.North;
+                cells[exitPosition.x, exitPosition.y].walls &= ~WallFlags.North;
                 break;
             case 1:
                 exitPosition = new Vector2Int(width - 1, Random.Range(0, height));
-                cells[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.East;
+                cells[exitPosition.x, exitPosition.y].walls &= ~WallFlags.East;
                 break;
             case 2:
                 exitPosition = new Vector2Int(Random.Range(0, width), 0);
-                cells[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.South;
+                cells[exitPosition.x, exitPosition.y].walls &= ~WallFlags.South;
                 break;
             case 3:
                 exitPosition = new Vector2Int(0, Random.Range(0, height));
-                cells[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.West;
+                cells[exitPosition.x, exitPosition.y].walls &= ~WallFlags.West;
                 break;
         }
     }

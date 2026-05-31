@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace VELDDev.BackroomsRenewed.Utils;
 
 /// <summary>
@@ -23,36 +25,20 @@ public class FairRandomizer : NetworkBehaviour
     public const string SHIP_TP = "OnShipTP";
     public const string SHIP_REV_TP = "OnShipRevTP";
 
-    private static readonly Dictionary<string, FairRandomizerEvent> StringToEventMap = new()
-    {
-        { DEATH_EVENT, FairRandomizerEvent.Death },
-        { OPEN_DOOR_EVENT, FairRandomizerEvent.OpenDoor },
-        { DAMAGE_EVENT, FairRandomizerEvent.Damage },
-        { CLIPPING_EVENT, FairRandomizerEvent.Clipping },
-        { SHIP_TP, FairRandomizerEvent.ShipTP },
-        { SHIP_REV_TP, FairRandomizerEvent.ShipRevTP }
-    };
+    private static readonly ReadOnlyDictionary<string, FairRandomizerEvent> StringToEventMap =
+        new ReadOnlyDictionary<string, FairRandomizerEvent>(new Dictionary<string, FairRandomizerEvent>()
+        {
+            { DEATH_EVENT, FairRandomizerEvent.Death },
+            { OPEN_DOOR_EVENT, FairRandomizerEvent.OpenDoor },
+            { DAMAGE_EVENT, FairRandomizerEvent.Damage },
+            { CLIPPING_EVENT, FairRandomizerEvent.Clipping },
+            { SHIP_TP, FairRandomizerEvent.ShipTP },
+            { SHIP_REV_TP, FairRandomizerEvent.ShipRevTP }
+        });
 
     // Network-synchronized parallel lists for luck values
     private NetworkList<byte> _luckKeys = null!;
     private NetworkList<float> _luckValues = null!;
-
-    // Legacy dictionary for backwards compatibility (read-only access)
-    public Dictionary<string, float> LuckDictionary
-    {
-        get
-        {
-            var dict = new Dictionary<string, float>();
-            foreach (var kvp in StringToEventMap)
-            {
-                if (TryGetLuckIndex(kvp.Value, out int index))
-                {
-                    dict[kvp.Key] = _luckValues[index];
-                }
-            }
-            return dict;
-        }
-    }
 
     void Awake()
     {
@@ -171,30 +157,15 @@ public class FairRandomizer : NetworkBehaviour
         if (IsServer)
         {
             SetLuck(eventType, currentLuck + chance);
+            Plugin.Instance.logger.LogWarning($"FairRandomizer: Event '{eventType}' failed, increasing luck by {chance} - New chance: {GetLuck(eventType)}");
         }
         else
         {
             // Request server to increase luck
             IncreaseLuckServerRpc(eventType, chance);
+            Plugin.Instance.logger.LogDebug($"Requested server to increase luck for {eventType} by {chance}");
         }
         return false;
-    }
-
-    /// <summary>
-    /// Checks if the event should trigger based on accumulated luck (server-authoritative).
-    /// Overload that accepts string event names for backwards compatibility.
-    /// </summary>
-    /// <param name="eventName">The event type string (use constants like DEATH_EVENT)</param>
-    /// <param name="chance">Chance (percentage as 0-1 float)</param>
-    /// <returns>True if the event triggers (player gets teleported)</returns>
-    public bool CheckChance(string eventName, float chance)
-    {
-        if (!StringToEventMap.TryGetValue(eventName, out FairRandomizerEvent eventType))
-        {
-            Plugin.Instance.logger.LogWarning($"FairRandomizer: Unknown event '{eventName}'");
-            return false;
-        }
-        return CheckChance(eventType, chance);
     }
 
     /// <summary>
@@ -203,18 +174,6 @@ public class FairRandomizer : NetworkBehaviour
     public float GetLuck(FairRandomizerEvent eventType)
     {
         return TryGetLuckIndex(eventType, out int index) ? _luckValues[index] : 0f;
-    }
-
-    /// <summary>
-    /// Gets the current luck value for an event using string name.
-    /// </summary>
-    public float GetLuck(string eventName)
-    {
-        if (!StringToEventMap.TryGetValue(eventName, out FairRandomizerEvent eventType))
-        {
-            return 0f;
-        }
-        return GetLuck(eventType);
     }
 
     /// <summary>
@@ -279,6 +238,7 @@ public class FairRandomizer : NetworkBehaviour
         if (TryGetLuckIndex(eventType, out int index))
         {
             _luckValues[index] = _luckValues[index] + amount;
+            Plugin.Instance.logger.LogDebug($"Increased luck for {eventType} by {amount}, new value: {_luckValues[index]}");
         }
     }
 
