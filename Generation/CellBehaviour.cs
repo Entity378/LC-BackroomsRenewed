@@ -30,7 +30,7 @@ public class CellBehaviour : NetworkBehaviour {
             Plugin.Instance.logger.LogDebug($"Cell {cell.position} initialized with light source enabled.");
             LightObject.SetActive(true);
             cellLightSource.enabled = true;
-            cellLightSource.intensity = defaultLightState ? 1f : 0f;
+            cellLightSource.intensity = defaultLightState ? 1000f : 0f;
         }
     }
     
@@ -45,7 +45,7 @@ public class CellBehaviour : NetworkBehaviour {
     private void SetLightState(bool state)
     {
         if (!hasLightSource) return;
-        cellLightSource.intensity = state ? 1f : 0f;
+        cellLightSource.intensity = state ? 1000f : 0f;
     }
 
     public void TwinkleLight(AnimationCurve intensityCurve, float duration)
@@ -60,10 +60,10 @@ public class CellBehaviour : NetworkBehaviour {
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float intensity = intensityCurve.Evaluate(elapsed / duration);
+            float intensity = intensityCurve.Evaluate(elapsed / duration) * 1000f;
             cellLightSource.intensity = intensity;
             yield return null;
         }
-        cellLightSource.intensity = defaultLightState ? 1f : 0f;
+        cellLightSource.intensity = defaultLightState ? 1000f : 0f;
     }
 }

@@ -44,6 +44,7 @@ public class Plugin : BaseUnityPlugin
         mod = DuskMod.RegisterMod(this, tocAssetBundle);
         logger.LogInfo(""">>> [x] #SS#T B#NDL# L##D#D; #SS#TS L##D#D""");
         RegisterAchievements();
+        logger.LogInfo(""">>> [x] #CHI#V#EM#NTS LO#D#D""");
         logger.LogInfo("""\\\ /!\ #RR#R: #NT#GR#T# CH#CK F##L#R# -- PR#C##D C#R#F#LL# /!\ ///""");
         logger.LogInfo(""">>> Entering the b--#c__ro#^m:s~""");
     }
