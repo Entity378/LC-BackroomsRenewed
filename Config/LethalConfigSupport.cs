@@ -236,7 +236,18 @@ internal static class LethalConfigSupport
                 Max = 10,
             }
         );
-        
+        var genExitCount = new IntSliderConfigItem(
+            config.ExitCount,
+            new IntSliderOptions
+            {
+                Name = "Exit Count",
+                Description = "The number of real exit doors that will spawn in the Backrooms.",
+                Section = "Generation",
+                Min = 1,
+                Max = 10,
+                RequiresRestart = false,
+            });
+
         // Advanced
 
         var legacyNavGen = new BoolCheckBoxConfigItem(
@@ -265,7 +276,8 @@ internal static class LethalConfigSupport
         LethalConfigManager.AddConfigItem(genMinSize);
         LethalConfigManager.AddConfigItem(genMaxSize);
         LethalConfigManager.AddConfigItem(genFakeExitMax);
-        
+        LethalConfigManager.AddConfigItem(genExitCount);
+
         LethalConfigManager.AddConfigItem(legacyNavGen);
     }
 }

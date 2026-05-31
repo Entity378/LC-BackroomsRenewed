@@ -1,3 +1,5 @@
+using Unity.XR.CoreUtils;
+
 namespace VELDDev.BackroomsRenewed.Generation;
 
 [RequireComponent(typeof(NetworkObject))]
@@ -41,6 +43,27 @@ public class CellBehaviour : NetworkBehaviour {
         EastWall.SetActive((_representation.walls & WallFlags.East) != 0);
         SouthWall.SetActive((_representation.walls & WallFlags.South) != 0);
         WestWall.SetActive((_representation.walls & WallFlags.West) != 0);
+    }
+
+    public Transform GetExitDoorSocket(WallFlags dir)
+    {
+        switch (dir)
+        {
+            case WallFlags.North:
+                return NorthWall.transform.GetChild(0);
+                break;
+            case WallFlags.East:
+                return EastWall.transform.GetChild(0);
+                break;
+            case WallFlags.South:
+                return SouthWall.transform.GetChild(0);
+                break;
+            case WallFlags.West:
+                return WestWall.transform.GetChild(0);
+                break;
+            default:
+                return null;
+        }
     }
 
     private void SetLightState(bool state)

@@ -27,6 +27,7 @@ public class LocalConfig
     public readonly ConfigEntry<int> MinBackroomsSize;
     public readonly ConfigEntry<int> MaxBackroomsSize;
     public readonly ConfigEntry<int> MaxFakeExitCount;
+    public readonly ConfigEntry<int> ExitCount;
     public readonly ConfigEntry<bool> LegacyNavMeshGeneration;
 
     internal ConfigFile CfgFile;
@@ -155,6 +156,12 @@ public class LocalConfig
             "Maximum Fake Exits Count",
             2,
             "The maximum number of fake exits that will appear in the Backrooms. They do not kill, just TP to somewhere else in the backrooms."
+        );
+        ExitCount = cfg.Bind(
+            "Generation",
+            "Exit Count",
+            1,
+            "The number of real exit doors that will spawn in the Backrooms."
         );
 
         // Advanced
