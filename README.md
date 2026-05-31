@@ -1,15 +1,15 @@
 # B#CKR##MS R#N#W#D
-A new Backrooms mod for Lethal Company, with many innovations.
+A new Backrooms mod for Lethal Company. Revamped. Reworked. Renewed.
 
 ## 📜 Explanation
 This mod is **not an interior** mod, it does not add new interior and **scrap does not spawn in the Backrooms**.  
-What it does is different. It adds parallel place, **The Backrooms**, where you can be teleported when you're about to die, when you take damages (very small chance) or when you clip through a wall or through the floor.  
+What it does is different. It adds parallel place, **The Backrooms**, where you can be teleported when you're about to die, when you take damages (very small chance) or when you clip through a wall or through the floor but also in many other situations.  
   
 ## ✨ Features
 Here is a non-exhaustive list of features. Some will remain hidden as they're meant to be discovered by chance.
-- **Procedurally generated Backrooms**: Pick between 5 generation algorithms for different backrooms designs and difficulties. Each cell/tile of the backrooms has many variants, some of them have specific features, easter eggs, etc.
-- **Situational TP**: Teleport in the backrooms when about to die (5% chance by default), when taking damages (0.1% chance by default), or when clipping through a wall or through the floor (100% chance by default)
-- **Correctly setup NavMesh**: For those who know what it means, you can guess what comes with that.
+- **Procedurally generated Backrooms**: Pick between 4 generation algorithms for different backrooms designs and difficulties. Each cell/tile of the backrooms has many variants, some of them have specific features, easter eggs, etc.
+- **Situational TP**: Teleport in various different situations with configurable chances.
+- **NavMesh**: For those who know what it means, you can guess what comes with that.
 - **Random stuff hidden in the Backrooms**: Mostly stuff I wanted to put there for fun or for the lore or ambience. Honestly it depends.
 
 ## 🔩 Settings
