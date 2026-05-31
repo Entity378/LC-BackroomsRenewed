@@ -19,6 +19,8 @@ public class Backrooms : NetworkBehaviour
     public GameObject BackroomsLightCover;          // Assign in inspector, light cover prefab to place above the backrooms to prevent light from leaking
     public BackroomsGenerator generator;            // Assign in inspector, the maze generator component
     public AnimationCurve lightTwinkleLightCurve;
+    public AudioSource ambientMusicSource;
+    public AudioSource ambientNoiseSource;
 
     [HideInInspector]
     public NetworkVariable<bool> IsGenerated = new(false);

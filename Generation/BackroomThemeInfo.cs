@@ -6,6 +6,7 @@ public class BackroomThemeInfo : ScriptableObject
     public string themeName;
     public List<CellVariantInfo> CellsVariants;
     public AudioClip AmbientNoise;
+    public GameObject ExitPrefab;
     public List<AmbientMusicInfo> AmbientMusics;
     public float weight = 1f;
 }
