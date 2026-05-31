@@ -53,6 +53,7 @@ public class CellBehaviour : NetworkBehaviour {
     {
         if (!cellLightSource || !hasLightSource) return;
         StartCoroutine(TwinkleCoroutine(intensityCurve, duration));
+        Plugin.Instance.logger.LogInfo($"Twinkle started for duration:{duration} seconds");
     }
 
     private IEnumerator TwinkleCoroutine(AnimationCurve intensityCurve, float duration)

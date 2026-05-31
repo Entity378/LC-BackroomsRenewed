@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using EasyTextEffects.Editor.MyBoxCopy.Extensions;
 using GameNetcodeStuff;
 using Unity.AI.Navigation;
 using UnityEngine.AI;
@@ -24,6 +25,8 @@ public class Backrooms : NetworkBehaviour
 
     [HideInInspector]
     public NetworkVariable<bool> IsGenerated = new(false);
+
+    [HideInInspector] public NetworkList<ulong> PlayersInBackrooms = new NetworkList<ulong>();
 
     [HideInInspector] public CellBehaviour[,] Cells;
 
@@ -108,6 +111,7 @@ public class Backrooms : NetworkBehaviour
                 TwinkleRandomLightsClientRpc();
                 _timeSinceLastTwinkleCheck = 0f;
                 _nextTwinkleCheckTime = Random.Range(3f, 15f);
+                Logger.LogInfo($"Twinkle check completed, next check in {_nextTwinkleCheckTime} seconds");
             }
         }
     }
@@ -188,6 +192,8 @@ public class Backrooms : NetworkBehaviour
         targetPlayer.TeleportPlayer(position, true);
         targetPlayer.ResetFallGravity();
         targetPlayer.isInsideFactory = true;
+        StartPlayingAmbientAudios();
+        PlayersInBackrooms.Add(playerClientId);
     }
 
     private Vector3 GetFallbackPosition()
@@ -440,7 +446,7 @@ public class Backrooms : NetworkBehaviour
             if(!cell.hasLightSource)
                 continue;
             var twinkleChance = Random.Range(0f, 100f);
-            if(twinkleChance < 10f)
+            if(twinkleChance < 40f)
             {
                 cell.TwinkleLight(lightTwinkleLightCurve, Random.Range(1f, lightTwinkleLightCurve.keys[^1].time));
             }
@@ -502,5 +508,35 @@ public class Backrooms : NetworkBehaviour
         var selected = variants[^1];
         _variantUsageCount[selected]++;
         return selected;
+    }
+
+    public void StartPlayingAmbientAudios()
+    {
+        if (ambientNoiseSource && CurrentTheme.AmbientNoise)
+        {
+            ambientNoiseSource.clip = CurrentTheme.AmbientNoise;
+            ambientNoiseSource.Play();
+            ambientNoiseSource.loop = true;
+        }
+
+        if (ambientMusicSource && CurrentTheme.AmbientMusics.Count > 0)
+        {
+            var randomMusic = CurrentTheme.AmbientMusics.GetWeightedRandom(md => (!md.isStreamSafe && LocalConfig.Singleton.StreamerMode.Value) ? 0.0f : 1.0f);
+            ambientMusicSource.clip = randomMusic.soundtrack;
+            ambientMusicSource.Play();
+        }
+    }
+
+    public void StopPlayingAmbientAudios()
+    {
+        if (ambientNoiseSource)
+        {
+            ambientNoiseSource.Stop();
+        }
+
+        if (ambientMusicSource)
+        {
+            ambientMusicSource.Stop();
+        }
     }
 }

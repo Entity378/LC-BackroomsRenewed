@@ -7,7 +7,9 @@ public class ExitBackroom : NetworkBehaviour
         PlayerControllerB localplayer = GameNetworkManager.Instance.localPlayerController;
         Transform thisPlayer = GameNetworkManager.Instance.localPlayerController.thisPlayerBody;
         
-        localplayer.TeleportPlayer(StartOfRound.Instance.playerSpawnPositions[localplayer.actualClientId].position, false, 0f, false, true);
+        localplayer.TeleportPlayer(StartOfRound.Instance.playerSpawnPositions[localplayer.playerClientId].position, false, 0f, false, true);
         localplayer.isInsideFactory = false;
+        Backrooms.Instance.StopPlayingAmbientAudios();
+        Backrooms.Instance.PlayersInBackrooms.Remove(localplayer.playerClientId);
     }
 }

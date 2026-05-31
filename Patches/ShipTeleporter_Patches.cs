@@ -6,6 +6,7 @@ public class ShipTeleporter_Patches
     [HarmonyPostfix, HarmonyPatch(nameof(ShipTeleporter.beamUpPlayer))]
     public static void BeamUpPlayerToBackrooms(ShipTeleporter __instance)
     {
+        
         // Only handle regular teleporter, not inverse
         if (__instance.isInverseTeleporter)
             return;
@@ -19,6 +20,9 @@ public class ShipTeleporter_Patches
         if (teleportedPlayer == null)
             return;
 
+        if (Backrooms.Instance.PlayersInBackrooms.Contains(teleportedPlayer.playerClientId))
+            return;
+
         bool sendToTheBackrooms = CheckTeleportChance(
             teleportedPlayer,
             FairRandomizerEvent.ShipTP,
@@ -30,7 +34,7 @@ public class ShipTeleporter_Patches
             Backrooms.Instance.TeleportPlayerToBackrooms(teleportedPlayer, SyncedConfig.Instance.DropHeldItemsOnTeleport);
         }
     }
-
+    
     [HarmonyPostfix, HarmonyPatch(nameof(ShipTeleporter.TeleportPlayerOutWithInverseTeleporter))]
     public static void InverseTeleporterToBackrooms(ShipTeleporter __instance, int playerObj)
     {
