@@ -13,6 +13,7 @@ public static class RoundManager_Patches
             return;
         
         Backrooms.Instance.GetComponent<NetworkObject>().Despawn(true);
+        GameObject.Destroy(Backrooms.Instance.gameObject);
     }
 
     [HarmonyPostfix, HarmonyPatch(nameof(RoundManager.SpawnSyncedProps))]
