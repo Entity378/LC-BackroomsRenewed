@@ -360,7 +360,7 @@ public class Backrooms : NetworkBehaviour
                 }
                 Cells[x, y] = cellmono;
                 
-                cellmono.gameObject.transform.SetParent(CellsHolder);
+                //cellmono.gameObject.transform.SetParent(CellsHolder);
                 
                 /*
                 if (!SyncedConfig.Instance.LegacyNavMeshGen && y % 5 == 0)
