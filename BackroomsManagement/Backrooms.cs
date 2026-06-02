@@ -14,7 +14,6 @@ public class Backrooms : NetworkBehaviour
     public static Backrooms Instance;
 
     public List<BackroomThemeInfo> themes;          // Assign in inspector, available backroom themes
-    public GameObject exitPrefab;                   // Assign in inspector, exit prefab
     public Transform CellsHolder;                   // Assign in inspector, parent transform for all cells
     public NavMeshSurface BackroomsNavMesh;          // Assign in inspector, the NavMeshSurface component to build the navmesh
     public GameObject BackroomsLightCover;          // Assign in inspector, light cover prefab to place above the backrooms to prevent light from leaking
@@ -33,7 +32,6 @@ public class Backrooms : NetworkBehaviour
     public BackroomThemeInfo CurrentTheme { get; private set; }
 
     private readonly Dictionary<CellVariantInfo, int> _variantUsageCount = [];
-    private readonly HashSet<CellVariantInfo> _requiredVariantsNotYetSpawned = [];
     private float _timeSinceLastTwinkleCheck = 0f;
     private float _nextTwinkleCheckTime = 0f;
     
@@ -259,21 +257,19 @@ public class Backrooms : NetworkBehaviour
             yield break;
         }
 
-        // Reset usage counter and required variants tracking for new generation
+        // Reset usage counter for new generation
         _variantUsageCount.Clear();
-        _requiredVariantsNotYetSpawned.Clear();
         foreach(var variant in CurrentTheme.CellsVariants)
         {
             _variantUsageCount[variant] = 0;
-            if(variant.mustSpawnAtLeastOnce)
-            {
-                _requiredVariantsNotYetSpawned.Add(variant);
-            }
         }
 
         Logger.LogInfo("Starting generation...");
         yield return generator.Generate();
         Cells = new CellBehaviour[generator.width, generator.height];
+
+        // Decide every cell's variant up front in two passes
+        var variantLayout = BuildVariantLayout();
         
         // Set navmesh location and size
         /*
@@ -293,7 +289,7 @@ public class Backrooms : NetworkBehaviour
             for(int y = 0; y < generator.height; y++)
             {
                 var cell = generator.cells[x, y];
-                var selectedVariant = GetWeightedRandomVariant();
+                var selectedVariant = variantLayout[x, y];
                 var cellgo = Instantiate(selectedVariant.variantPrefab, CellsHolder);
                 cellgo.transform.localPosition = new Vector3(CELL_SIZE * x, 0, CELL_SIZE * y);
                 cellgo.GetComponent<NetworkObject>().Spawn(true);
@@ -479,38 +475,75 @@ public class Backrooms : NetworkBehaviour
         }
     }
 
-    private CellVariantInfo GetWeightedRandomVariant()
+    private CellVariantInfo[,] BuildVariantLayout()
     {
-        // If there are required variants that haven't spawned yet, prioritize them
-        // It's not optimal as they may all spawn in a corner of the backrooms but
-        // It will do the trick for now.
-        if(_requiredVariantsNotYetSpawned.Count > 0)
-        {
-            // Get available required variants (respecting max amount)
-            var availableRequiredVariants = _requiredVariantsNotYetSpawned
-                .Where(v => v.maxAmount == -1 || _variantUsageCount[v] < v.maxAmount)
-                .ToList();
+        int width = generator.width;
+        int height = generator.height;
+        var layout = new CellVariantInfo[width, height];
 
-            if(availableRequiredVariants.Count > 0)
+        var basicVariants = CurrentTheme.CellsVariants
+            .Where(v => !v.mustSpawnAtLeastOnce)
+            .ToList();
+
+        // First pass: fill cells with random weighted basic variant
+        for(int x = 0; x < width; x++)
+        {
+            for(int y = 0; y < height; y++)
             {
-                var selectedVariant = SelectWeightedRandom(availableRequiredVariants);
-                _requiredVariantsNotYetSpawned.Remove(selectedVariant);
-                return selectedVariant;
+                var available = basicVariants
+                    .Where(v => v.maxAmount == -1 || _variantUsageCount[v] < v.maxAmount)
+                    .ToList();
+
+                if(available.Count > 0)
+                {
+                    layout[x, y] = SelectWeightedRandom(available);
+                }
+                else
+                {
+                    // No basic variant available (none defined or all maxed out).
+                    var fallback = CurrentTheme.CellsVariants[0];
+                    _variantUsageCount[fallback]++;
+                    layout[x, y] = fallback;
+                }
             }
         }
 
-        // Normal weighted random selection for all available variants
-        var availableVariants = CurrentTheme.CellsVariants.Where(v =>
-            v.maxAmount == -1 || _variantUsageCount[v] < v.maxAmount
-        ).ToList();
+        // Second pass: scatter required variants into random cells.
+        var requiredVariants = CurrentTheme.CellsVariants
+            .Where(v => v.mustSpawnAtLeastOnce && v.maxAmount != 0)
+            .ToList();
 
-        // If no variants available (all maxed out), return the first variant as fallback
-        if(availableVariants.Count == 0)
+        if(requiredVariants.Count > 0)
         {
-            return CurrentTheme.CellsVariants[0];
+            var usedCells = new HashSet<(int x, int y)>();
+            int totalCells = width * height;
+
+            foreach(var required in requiredVariants)
+            {
+                if(usedCells.Count >= totalCells)
+                {
+                    Logger.LogWarning($"No free cells left to place required variant '{required.name}'.");
+                    break;
+                }
+
+                (int x, int y) cell;
+                do
+                {
+                    cell = (Random.Range(0, width), Random.Range(0, height));
+                } while(usedCells.Contains(cell));
+
+                usedCells.Add(cell);
+
+                // We're overwriting a basic variant, so reclaim its usage count.
+                var replaced = layout[cell.x, cell.y];
+                _variantUsageCount[replaced]--;
+
+                layout[cell.x, cell.y] = required;
+                _variantUsageCount[required]++;
+            }
         }
 
-        return SelectWeightedRandom(availableVariants);
+        return layout;
     }
 
     private CellVariantInfo SelectWeightedRandom(List<CellVariantInfo> variants)
