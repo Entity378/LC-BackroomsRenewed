@@ -9,12 +9,17 @@ public class CellBehaviour : NetworkBehaviour {
     public GameObject SouthWall;
     public GameObject WestWall;
     public GameObject LightObject;
+    public MeshRenderer CeilingMR;
     public Light cellLightSource;
     public float DefaultLightIntensity = 750f;
     public bool hasLightSource = false;  // Only when initializing
     public bool defaultLightState = false;  // Anytime
     
     private Cell _representation;
+
+    private Material lightOnMat;
+    private Material lightOffMat;
+    private Material ceilingMat;
     
     [ClientRpc]
     public void InitializeClientRpc(Cell cell, bool withLight, bool lightState)
@@ -23,10 +28,16 @@ public class CellBehaviour : NetworkBehaviour {
         hasLightSource = withLight;
         defaultLightState = lightState;
         UpdateWalls();
+        
+        lightOnMat = CeilingMR.materials[0]; 
+        ceilingMat = CeilingMR.materials[1];
+        lightOffMat = CeilingMR.materials[2];
         if(!hasLightSource)
         {
             Plugin.Instance.logger.LogWarning($"Cell {cell.position} initialized with light source disabled.");
             LightObject.SetActive(false);
+            CeilingMR.materials[0] = ceilingMat;
+            CeilingMR.materials[1] = lightOnMat;
         }
         else
         {
@@ -34,6 +45,12 @@ public class CellBehaviour : NetworkBehaviour {
             LightObject.SetActive(true);
             cellLightSource.enabled = true;
             cellLightSource.intensity = defaultLightState ? DefaultLightIntensity : 0f;
+
+            if (!defaultLightState)
+            {
+                CeilingMR.materials[0] = lightOffMat;
+                CeilingMR.materials[2] = lightOnMat;
+            }
         }
     }
     

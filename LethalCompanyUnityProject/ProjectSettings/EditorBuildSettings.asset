@@ -62,4 +62,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/LethalCompany/Game/Scenes/SampleSceneRelay.unity
     guid: 16abed1b9d5f9db4e8c3c401758c44c6
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: ddec2d86ae5e29e6eacb5a721601eedd,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: cfc864ca44faf9c3c8d1e07803bf1589,
+      type: 2}

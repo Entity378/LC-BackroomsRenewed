@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   variantPrefab: {fileID: 9179525186742188660, guid: 5c5fc42d0a9462f799a887e2248749fc,
     type: 3}
+  LightOffMaterial: {fileID: 2100000, guid: fb77cc1cfe240ac4ebfdc610ff47318e, type: 2}
+  CeilingMaterial: {fileID: 2100000, guid: 6fbee6bc78ed393e5a5f0d3ad1cf24c5, type: 2}
   weight: 100
   maxAmount: -1
   mustSpawnAtLeastOnce: 0
