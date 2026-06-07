@@ -22,6 +22,7 @@ internal static class LethalConfigSupport
     internal static void RegisterLethalConfig(LocalConfig config)
     {
         LethalConfigManager.SetModDescription(LocalConfig.ModDescription);
+        LethalConfigManager.SetModIcon(Plugin.Instance.mod.ModInformation.ModIcon);
         CanModifyResult NetworkAllowModifyCb() => (SyncedConfig.Synced && SyncedConfig.IsHost && NetworkManager.Singleton.IsServer) || !SyncedConfig.Synced;
 
         var streamerMode = new BoolCheckBoxConfigItem(
