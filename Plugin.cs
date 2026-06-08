@@ -42,6 +42,7 @@ public class Plugin : BaseUnityPlugin
         var tocAssetBundle = AssetBundle.LoadFromFile(Path.Combine(PluginDir, "backroomsrenewed_toc"));
         RegisterPrefabs();
         mod = DuskMod.RegisterMod(this, tocAssetBundle);
+        LethalConfigSupport.RegisterModIcon(mod.ModInformation.ModIcon);
         logger.LogInfo(""">>> [x] #SS#T B#NDL# L##D#D; #SS#TS L##D#D""");
         RegisterAchievements();
         logger.LogInfo(""">>> [x] #CHI#V#EM#NTS LO#D#D""");
