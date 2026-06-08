@@ -1,6 +1,9 @@
 # Changelog
 Here are listed all the changes made in each update.
 
+# [0.1.2](https://github.com/VELD-Dev/LC-BackroomsRenewed/releases/tag/v0.1.2) - 2026-06-08
+- Fixed a bug occurring when a player tried to join that would prevent from joining.
+
 ## [0.1.1](https://github.com/VELD-Dev/LC-BackroomsRenewed/releases/tag/v0.1.1) - 2026-06-08
 - Fixed a bug occurring when a player tried to join that would prevent from joining.
 - Fixed a game crash due to networking objects not synchronizing properly
