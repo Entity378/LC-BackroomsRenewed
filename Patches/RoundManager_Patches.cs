@@ -28,7 +28,8 @@ public static class RoundManager_Patches
             Backrooms.Instance = null;
         }
 
-        var backroomsGo = GameObject.Instantiate(Plugin.Instance.BackroomsPrefab, new Vector3(1000, 50, 0), Quaternion.identity);
+        var dungenRoot = __instance.dungeonGenerator.Root.transform.position;
+        var backroomsGo = GameObject.Instantiate(Plugin.Instance.BackroomsPrefab, new Vector3(5000, dungenRoot.y, 0), Quaternion.identity);
         backroomsGo.GetComponent<NetworkObject>().Spawn(true);
         
     }

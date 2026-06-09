@@ -11,6 +11,7 @@ Here is a non-exhaustive list of features. Some will remain hidden as they're me
 - **Situational TP**: Teleport in various different situations with configurable chances.
 - **NavMesh**: For those who know what it means, you can guess what comes with that.
 - **Random stuff hidden in the Backrooms**: Mostly stuff I wanted to put there for fun or for the lore or ambience. Honestly it depends.
+- **VR Support**: The Backrooms can be visited in VR !
 
 ## 🔩 Settings
 - `Streamer Mode`: It's not because of any gore content, it's just because sometimes, the Backrooms can have speakers that broadcast music which can be occasionally copyrighted. It replaces the copyrighted musics with copyright-free musics.
@@ -32,6 +33,7 @@ Here is a non-exhaustive list of features. Some will remain hidden as they're me
 - `Min Backroom Size`: The minimum backroom size (width and length) **in tiles**. 1 tile is 8 meters. Recommended size is 20 (default)
 - `Max Backroom Size`: It's not fun to have too small backrooms, so it's better to keep it around 40-50.
 - `Max Fake Exits Count`: Sets how many fake exits shall spawn in the backrooms. Fake exits don't kill you, they teleport you somewhere else in the backrooms.
+- And many more !
 
 ## Credits
 - I made models and programming myself
@@ -42,3 +44,4 @@ Here is a non-exhaustive list of features. Some will remain hidden as they're me
 - Thanks to **Moroxide** for providing and editing ambience sounds for the Backrooms !
 - Thanks to **Heymeelie/Neekhaulas** for making the original Backrooms mod 🤩
 - Thanks to **[Kenji](https://thunderstore.io/c/lethal-company/p/rectorado/)** for helping me to solve light flickers
+- Thanks to **[Entity378](https://new.thunderstore.io/c/lethal-company/p/Entity378/)** for helping me with some bugs !
