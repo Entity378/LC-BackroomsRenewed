@@ -28,7 +28,7 @@ public static class RoundManager_Patches
             Backrooms.Instance = null;
         }
 
-        var dungenRootY = 50;
+        var dungenRootY = 50f;
         if (__instance.dungeonGenerator != null && __instance.dungeonGenerator.Root != null)
         {
             dungenRootY = __instance.dungeonGenerator.Root.transform.position.y;
