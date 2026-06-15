@@ -10,6 +10,6 @@ public class ExitBackroom : NetworkBehaviour
         localplayer.TeleportPlayer(StartOfRound.Instance.playerSpawnPositions[localplayer.playerClientId].position, false, 0f, false, true);
         localplayer.isInsideFactory = false;
         Backrooms.Instance.StopPlayingAmbientAudios();
-        Backrooms.Instance.PlayersInBackrooms.Remove(localplayer.playerClientId);
+        Backrooms.Instance.RemovePlayerFromBackrooms(localplayer.playerClientId);
     }
 }
