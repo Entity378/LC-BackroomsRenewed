@@ -134,6 +134,12 @@ public class Backrooms : NetworkBehaviour
                 Logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
             }
 
+            // NetworkList can only be mutated on the server.
+            if (!PlayersInBackrooms.Contains(targetPlayer.playerClientId))
+            {
+                PlayersInBackrooms.Add(targetPlayer.playerClientId);
+            }
+
             TeleportPlayerClientRpc(targetPlayer.playerClientId, targetPos, dropItems);
         }
         else
@@ -166,6 +172,12 @@ public class Backrooms : NetworkBehaviour
             Logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
         }
 
+        // NetworkList can only be mutated on the server.
+        if (!PlayersInBackrooms.Contains(playerClientId))
+        {
+            PlayersInBackrooms.Add(playerClientId);
+        }
+
         TeleportPlayerClientRpc(playerClientId, targetPos, dropItems);
     }
 
@@ -188,21 +200,72 @@ public class Backrooms : NetworkBehaviour
             targetPlayer.DisableJetpackControlsLocally();
         }
 
-        targetPlayer.TeleportPlayer(position, true);
-        targetPlayer.movementForcesLastFrame = Vector3.zero;
+        targetPlayer.TeleportPlayer(GetFloorSafePosition(position), true);
         targetPlayer.ResetFallGravity();
         targetPlayer.isInsideFactory = true;
         StartPlayingAmbientAudios();
-        PlayersInBackrooms.Add(playerClientId);
+    }
+
+    /// <summary>
+    /// Raycast down to the real local floor and place the player slightly above it.
+    /// Players always land on top of it instead of clipping underneath.
+    /// </summary>
+    private Vector3 GetFloorSafePosition(Vector3 position)
+    {
+        const float SPAWN_HEIGHT_OFFSET = 2f;
+        if (Physics.Raycast(position + Vector3.up * 4f, Vector3.down, out RaycastHit floorHit,
+                12f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        {
+            return floorHit.point + Vector3.up * SPAWN_HEIGHT_OFFSET;
+        }
+        return position + Vector3.up * SPAWN_HEIGHT_OFFSET;
+    }
+
+    /// <summary>
+    /// Removes a player from the backrooms tracking list. Server-authoritative.
+    /// A NetworkList cannot be modified directly from a client.
+    /// </summary>
+    public void RemovePlayerFromBackrooms(ulong playerClientId)
+    {
+        if (IsServer)
+        {
+            if (PlayersInBackrooms.Contains(playerClientId))
+            {
+                PlayersInBackrooms.Remove(playerClientId);
+            }
+        }
+        else
+        {
+            RemovePlayerFromBackroomsServerRpc(playerClientId);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RemovePlayerFromBackroomsServerRpc(ulong playerClientId)
+    {
+        if (PlayersInBackrooms.Contains(playerClientId))
+        {
+            PlayersInBackrooms.Remove(playerClientId);
+        }
     }
 
     private Vector3 GetFallbackPosition()
     {
-        return new Vector3(
-            transform.position.x,
-            transform.position.y + 2,
-            transform.position.z
+        // Anchor to where the cells actually are, and try to snap to the navmesh at the grid center.
+        // Fallback still lands on a real floor instead of the void.
+        var origin = CellsHolder != null ? CellsHolder.position : transform.position;
+        var center = new Vector3(
+            origin.x + (generator.width * CELL_SIZE) / 2f,
+            origin.y,
+            origin.z + (generator.height * CELL_SIZE) / 2f
         );
+
+        if (NavMesh.SamplePosition(center, out NavMeshHit hit, generator.width * CELL_SIZE, NavMesh.AllAreas))
+        {
+            return hit.position;
+        }
+
+        return new Vector3(origin.x, origin.y + 2f, origin.z);
     }
 
     private PlayerControllerB GetPlayerByClientId(ulong clientId)
@@ -220,11 +283,13 @@ public class Backrooms : NetworkBehaviour
     private Vector3? PickRandomPosOnNavmesh(int maxAttempts = 30)
     {
         // Calculate the bounds of the backrooms
-        float minX = 0f;
-        float maxX = generator.width * CELL_SIZE;
-        float minZ = 0f;
-        float maxZ = generator.height * CELL_SIZE;
-        float y = -1000f; // Backrooms floor level
+        var origin = CellsHolder != null ? CellsHolder.position : transform.position;
+
+        float minX = origin.x;
+        float maxX = origin.x + generator.width * CELL_SIZE;
+        float minZ = origin.z;
+        float maxZ = origin.z + generator.height * CELL_SIZE;
+        float y = origin.y; // Backrooms floor level (world space)
 
         for(int i = 0; i < maxAttempts; i++)
         {
@@ -405,12 +470,17 @@ public class Backrooms : NetworkBehaviour
         // yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
 
         Logger.LogInfo("Finished backrooms generation");
+        IsGenerated.Value = true;
         SetupBackroomsClientRpc(generator.width, generator.height);
     }
 
     [ClientRpc]
     private void SetupBackroomsClientRpc(int width, int length)
     {
+        // Adopt authoritative size sent by the server so the client navmesh is baked over the real area.
+        generator.width = width;
+        generator.height = length;
+
         // Set anti-light leak cover location and size
         var backroomsCenter = new Vector3((width * CELL_SIZE) / 2f, 10f, (length * CELL_SIZE) / 2f);
         BackroomsLightCover.transform.localPosition = backroomsCenter;
