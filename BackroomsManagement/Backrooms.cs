@@ -213,7 +213,7 @@ public class Backrooms : NetworkBehaviour
     private Vector3 GetFloorSafePosition(Vector3 position)
     {
         const float SPAWN_HEIGHT_OFFSET = 2f;
-        if (Physics.Raycast(position + Vector3.up * 4f, Vector3.down, out RaycastHit floorHit,
+        if (Physics.Raycast(position + Vector3.up * 2f, Vector3.down, out RaycastHit floorHit,
                 12f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
         {
             return floorHit.point + Vector3.up * SPAWN_HEIGHT_OFFSET;

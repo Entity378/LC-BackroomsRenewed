@@ -1,6 +1,11 @@
 # Changelog
 Here are listed all the changes made in each update.
 
+# [0.1.5](https://github.com/VELD-Dev/LC-BackroomsRenewed/releases/tag/v0.1.5) - 2026-06-11
+- Fixed a bug teleporting distant clients in the void
+- Fixed lights not flickering (at least confirmed for host)
+- Fixed a bug causing backrooms to be generated only for host
+
 # [0.1.4](https://github.com/VELD-Dev/LC-BackroomsRenewed/releases/tag/v0.1.4) - 2026-06-10
 - Fixed a bug preventing from teleporting into the backrooms
 - Removed momentum cancellation as it was causing issues with teleportation

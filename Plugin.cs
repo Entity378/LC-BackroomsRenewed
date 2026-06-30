@@ -1,4 +1,5 @@
 ﻿using Dusk;
+using Unity.XR.CoreUtils;
 
 namespace VELDDev.BackroomsRenewed;
 
@@ -53,12 +54,20 @@ public class Plugin : BaseUnityPlugin
     void RegisterPrefabs()
     {
         BackroomsPrefab = assetBundle.LoadAsset<GameObject>("Backrooms");
-        var cellsVariantsPrefabs = assetBundle.LoadAllAssets<CellBehaviour>(); 
+        var cellVariantsInfo = assetBundle.LoadAllAssets<CellVariantInfo>(); 
         
         DawnLib.RegisterNetworkPrefab(BackroomsPrefab);
-        foreach(var cell in cellsVariantsPrefabs)
+        foreach(var cell in cellVariantsInfo)
         {
-            DawnLib.RegisterNetworkPrefab(cell.gameObject);
+            DawnLib.RegisterNetworkPrefab(cell.variantPrefab);
+            Logger.LogDebug($"Registered prefab {cell.variantPrefab.name}");
+        }
+
+        var themesVariants = assetBundle.LoadAllAssets<BackroomThemeInfo>();
+        foreach (var theme in themesVariants)
+        {
+            DawnLib.RegisterNetworkPrefab(theme.ExitPrefab);
+            Logger.LogDebug($"Registered prefab {theme.ExitPrefab.name}");
         }
     }
     
